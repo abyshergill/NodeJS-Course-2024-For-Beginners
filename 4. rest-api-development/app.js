@@ -55,12 +55,19 @@ app.post("/add", (req, res) => {
 
 //update a book
 app.put("/update/:id", (req, res) => {
+  // Convert id to string to match your data structure
+  const bookId = req.params.id.toString();
+
   const findCurrentBook = books.find(
-    (bookItem) => bookItem.id === req.params.id
+    (bookItem) => bookItem.id === bookId
   );
   if (findCurrentBook) {
-    findCurrentBook.title = req.body.title || findCurrentBook.title;
-
+    //Validate that title is provied in request body 
+    if (!req.body || req.body.title){
+      return res.status(400).json({
+        message : "Title is required in request body"
+      });
+    }
     res.status(200).json({
       message: `Book with ID ${req.params.id} updated successfully`,
       data: findCurrentBook,
